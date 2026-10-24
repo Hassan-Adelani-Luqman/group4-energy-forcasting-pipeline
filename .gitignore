@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+
+# Environment
+.env
+
+# Data
+data/raw/*.csv
+data/processed/*.csv
+
+# Model artifacts
+src/models/artifacts/*.pkl
+src/models/artifacts/*.joblib
+src/models/artifacts/*.keras
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

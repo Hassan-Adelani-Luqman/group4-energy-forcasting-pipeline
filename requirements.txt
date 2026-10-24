@@ -1,0 +1,17 @@
+pandas
+numpy
+matplotlib
+seaborn
+statsmodels
+scikit-learn
+xgboost
+holidays
+sqlalchemy
+pymysql
+pymongo
+fastapi
+uvicorn[standard]
+joblib
+python-dotenv
+jupyter
+requests
