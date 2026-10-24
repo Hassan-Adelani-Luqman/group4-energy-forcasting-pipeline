@@ -42,9 +42,15 @@ End-to-end time series pipeline for the [PJM Hourly Energy Consumption](https://
    docker-compose up -d
    ```
 4. Download the PJME and AEP CSVs from the [Kaggle dataset](https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption) and place them in `data/raw/`.
-5. Run the EDA notebook: `notebooks/01_eda_and_preprocessing.ipynb` — this trains the models and writes
-   `data/processed/*.csv` (used by Task 2) and `src/models/artifacts/*.joblib` (used by Task 4).
-6. Load the databases:
+5. Run the EDA notebook: `notebooks/01_eda_and_preprocessing.ipynb` — this cleans the raw series, answers the
+   analytical questions, saves figures to `reports/figures/`, and writes `data/processed/*.csv` (used by Task 2).
+6. Train the models (Linear Regression baseline vs tuned XGBoost, per region):
+   ```
+   python -m src.models.train
+   ```
+   This writes the experiment table to `src/models/artifacts/experiment_results.csv` and the winning model per
+   region to `src/models/artifacts/*.joblib` (used by Task 4).
+7. Load the databases:
    ```
    python -m src.database.sql.load_mysql
    python -m src.database.mongodb.setup
