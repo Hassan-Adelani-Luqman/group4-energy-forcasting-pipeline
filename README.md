@@ -6,12 +6,12 @@ End-to-end time series pipeline for the [PJM Hourly Energy Consumption](https://
 
 ## Team & Roles
 
-| Member | Task | Branch |
-|---|---|---|
-| Hassan Adelani Luqman | Task 1 — EDA, preprocessing, modeling | `phase1-eda` |
-| AbdalazizI Twariki | Task 2 — SQL + MongoDB design & implementation | `databases` |
-| Nkhomotabo Amazing Mkhonta | Task 3 — CRUD API for both databases | `phase3-api` |
-| Parfait Shema Semana | Task 4 — Forecast script | `phase4-forecast` |
+| # | Member | Task | Responsibilities | Main Code |
+|:-:|---|---|---|---|
+| 1 | **Hassan Adelani Luqman** | Task 1 — Time-Series EDA, Preprocessing & Modeling | Data cleaning, exploratory analysis, analytical questions, feature engineering, model training & tuning | `notebooks/`, `src/preprocessing/`, `src/models/` |
+| 2 | **AbdalazizI Twariki** | Task 2 — Database Design | MySQL schema & ERD, MongoDB collection design, data loading, demonstration queries | `src/database/`, `docs/erd.mmd` |
+| 3 | **Nkhomotabo Amazing Mkhonta** | Task 3 — CRUD & Time-Series API | FastAPI CRUD endpoints for MySQL and MongoDB, latest-record and date-range queries | `src/api/` |
+| 4 | **Parfait Shema Semana** | Task 4 — Forecast Script | Fetch data from the API, preprocess, load the trained model, predict and write the forecast back | `src/forecast/` |
 
 ## Repo Structure
 
