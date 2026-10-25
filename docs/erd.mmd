@@ -1,0 +1,46 @@
+%% Group 4 — Energy Forecasting Pipeline
+%% Entity-Relationship Diagram for the MySQL schema (src/database/sql/schema.sql)
+%% Render at https://mermaid.live or with the Mermaid CLI: mmdc -i erd.mmd -o erd.png
+erDiagram
+    regions ||--o{ energy_readings : "has"
+    regions ||--o{ predictions : "forecast for"
+    calendar_features ||--o{ energy_readings : "describes ts of"
+
+    regions {
+        int         region_id   PK
+        varchar     region_code UK "PJME, AEP, ..."
+        varchar     region_name
+        varchar     description
+    }
+
+    calendar_features {
+        datetime    reading_ts  PK
+        tinyint     hour            "0-23"
+        tinyint     day_of_week     "0=Mon..6=Sun"
+        tinyint     month           "1-12"
+        tinyint     is_weekend
+        tinyint     is_holiday
+    }
+
+    energy_readings {
+        bigint      reading_id       PK
+        int         region_id        FK
+        datetime    reading_ts       FK
+        decimal     mw
+        decimal     lag_1h
+        decimal     lag_24h
+        decimal     lag_168h
+        decimal     rolling_mean_24h
+        decimal     rolling_mean_7d
+        decimal     rolling_std_24h
+        enum        split            "train/val/test"
+    }
+
+    predictions {
+        bigint      prediction_id PK
+        int         region_id     FK
+        datetime    target_ts
+        decimal     predicted_mw
+        varchar     model_name
+        datetime    generated_at
+    }
