@@ -202,8 +202,14 @@ entry, restoring the document to its original state.
 }
 ```
 
-## Known limitation
+## Duplicate predictions — `409 Conflict`
 
-Both `predictions` stores have a unique `(region, target_ts, model_name)` key, so posting the same prediction twice is
-rejected — but the API currently surfaces that as `500 Internal Server Error` rather than a `409 Conflict`. The
-forecast script (Task 4) treats any error status on write-back as "already predicted" and carries on.
+Both `predictions` stores have a unique `(region, target_ts, model_name)` key. Posting the exact same prediction a
+second time to either `POST /api/sql/predictions` or `POST /api/mongo/predictions` is rejected:
+
+**Response (409 Conflict):**
+```json
+{"detail": "Prediction already exists for this region, target_ts and model"}
+```
+
+The forecast script (Task 4) treats 409 as "already predicted by a previous run" and carries on.

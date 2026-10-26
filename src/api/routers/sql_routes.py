@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.api.dependencies import get_sql_db
@@ -81,9 +82,14 @@ def create_prediction(prediction: PredictionCreate, db: Session = Depends(get_sq
         INSERT INTO predictions (region_id, target_ts, predicted_mw, model_name)
         VALUES (:region_id, :target_ts, :predicted_mw, :model_name)
     """)
-    res = db.execute(query, prediction.model_dump())
-    db.commit()
-    
+    try:
+        res = db.execute(query, prediction.model_dump())
+        db.commit()
+    except IntegrityError:
+        # unique (region_id, target_ts, model_name) key — this forecast already exists
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Prediction already exists for this region, target_ts and model")
+
     get_query = text("SELECT * FROM predictions WHERE prediction_id = :pred_id")
     result = db.execute(get_query, {"pred_id": res.lastrowid}).mappings().first()
     return dict(result)

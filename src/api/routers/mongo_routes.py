@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from pymongo.database import Database
+from pymongo.errors import DuplicateKeyError
 
 from src.api.dependencies import get_mongo_db
 from src.api.schemas import MongoPredictionCreate, MongoReadingCreate, MongoReadingUpdate
@@ -79,8 +80,12 @@ def delete_reading(region_code: str, date: datetime, hour: int, db: Database = D
 def create_prediction(prediction: MongoPredictionCreate, db: Database = Depends(get_mongo_db)):
     pred_data = prediction.model_dump()
     pred_data["generated_at"] = datetime.utcnow()
-    db[PRED_COL].insert_one(pred_data)
-    
+    try:
+        db[PRED_COL].insert_one(pred_data)
+    except DuplicateKeyError:
+        # unique (region_code, target_ts, model_name) index — this forecast already exists
+        raise HTTPException(status_code=409, detail="Prediction already exists for this region, target_ts and model")
+
     # Remove _id for return
     pred_data.pop("_id", None)
     return pred_data
