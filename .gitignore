@@ -8,14 +8,17 @@ env/
 # Environment
 .env
 
-# Data
+# Data (raw CSVs are downloaded manually; processed CSVs are rebuilt by the notebook)
 data/raw/*.csv
 data/processed/*.csv
+data/*.zip
 
-# Model artifacts
+# Model artifacts (the two *_winning_model.joblib files are committed so Task 4 runs from a fresh clone)
 src/models/artifacts/*.pkl
-src/models/artifacts/*.joblib
 src/models/artifacts/*.keras
+
+# Local AI-assistant notes
+CLAUDE.md
 
 # Jupyter
 .ipynb_checkpoints/
