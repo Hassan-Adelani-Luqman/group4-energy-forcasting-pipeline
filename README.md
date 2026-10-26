@@ -2,7 +2,9 @@
 
 End-to-end time series pipeline for the [PJM Hourly Energy Consumption](https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption) dataset (PJME + AEP regions): EDA & forecasting models -> MySQL + MongoDB storage -> FastAPI CRUD -> forecast script that writes predictions back through the API.
 
-**Repository:** https://github.com/Hassan-Adelani-Luqman/group4-energy-forecasting-pipeline
+**Repository:** https://github.com/Hassan-Adelani-Luqman/group4-energy-forcasting-pipeline
+
+**Report:** [reports/report.pdf](reports/report.pdf)
 
 ## Team & Roles
 
@@ -33,9 +35,11 @@ End-to-end time series pipeline for the [PJM Hourly Energy Consumption](https://
 1. Clone the repo and create a Python virtual environment:
    ```
    python -m venv venv
-   venv\Scripts\activate
+   venv\Scripts\activate          # Windows
+   source venv/bin/activate       # macOS / Linux
    pip install -r requirements.txt
    ```
+   Package versions are pinned to the ones the pipeline was tested with (Python 3.12).
 2. Copy `.env.example` to `.env` and adjust values if needed.
 3. Start local MySQL + MongoDB:
    ```
@@ -49,7 +53,8 @@ End-to-end time series pipeline for the [PJM Hourly Energy Consumption](https://
    python -m src.models.train
    ```
    This writes the experiment table to `src/models/artifacts/experiment_results.csv` and the winning model per
-   region to `src/models/artifacts/*.joblib` (used by Task 4).
+   region to `src/models/artifacts/*.joblib` (used by Task 4). Both trained models are already committed, so this
+   step is only needed to reproduce the experiments.
 7. Load the databases:
    ```
    python -m src.database.sql.load_mysql
@@ -71,5 +76,18 @@ python -m src.forecast.run_forecast              # both regions
 python -m src.forecast.run_forecast --region PJME  # single region
 ```
 Fetches a trailing window through the API, engineers features with Task 1's pipeline, predicts with the Task 1
-model, and writes the result back to both `/predictions` endpoints. See
+model, and writes the result back to both `/predictions` endpoints. The API address comes from `API_BASE_URL` in
+`.env` (default `http://localhost:8000`) and can be overridden with `--api-base`. Re-running for an hour that is
+already predicted is skipped with a warning (the API returns `409 Conflict`). See
 [src/forecast/forecast_example.md](src/forecast/forecast_example.md) for a captured example run.
+
+## Results
+
+| Region | Model | Test RMSE (MW) | Test MAPE |
+|---|---|---|---|
+| PJME | Linear Regression (baseline) | 1627.4 | 3.84% |
+| PJME | **XGBoost (tuned)** | **537.7** | **1.08%** |
+| AEP | Linear Regression (baseline) | 575.6 | 3.10% |
+| AEP | **XGBoost (tuned)** | **188.5** | **0.90%** |
+
+Full experiment table: [src/models/artifacts/experiment_results.csv](src/models/artifacts/experiment_results.csv).
